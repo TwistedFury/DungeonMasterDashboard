@@ -9,20 +9,31 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      # Checkout the code
       - uses: actions/checkout@v4
 
-      # Install .NET SDK
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
 
-      # Publish the site
       - name: Publish
-        run: dotnet publish DungeonMasterDashboard.csproj -c:Release -o:public -p:GHPages=true
+        run: dotnet publish DungeonMasterDashboard.csproj -c Release -o public
 
-      # Deploy the site
+      # 1) Prevent Jekyll from skipping _framework
+      - name: Add .nojekyll
+        run: touch public/wwwroot/.nojekyll
+
+      # 2) Make GitHub Pages work with client-side routing (refresh/deep links)
+      - name: Add SPA 404 fallback
+        run: cp public/wwwroot/index.html public/wwwroot/404.html
+
+      # 3) Rewrite <base href="/"> to <base href="/<repo>/">
+      - name: Rewrite base href for GitHub Pages
+        uses: SteveSandersonMS/ghaction-rewrite-base-href@v1
+        with:
+          html_path: public/wwwroot/index.html
+          base_href: /${{ github.event.repository.name }}/
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
