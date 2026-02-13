@@ -1,7 +1,61 @@
 ﻿@page "/authentication/{action}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-<RemoteAuthenticatorView Action="@Action" />
 
+
+@if (Action == "login")
+{
+    <div class="mx-auto rounded border p-4" style="width: 400px; margin: 60px">
+        <h3 class="text-center mb-3">Login</h3>
+        <hr />
+
+        @if (error.Length > 0)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>@error</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <InputText class="form-control" @bind-Value="email"></InputText>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <InputText class="form-control" @bind-Value="password"></InputText>
+        </div>
+
+        <div class="row">
+            <div class="col d-grid">
+                <button class="btn btn-primary" @onclick="LoginAsync">Log In</button>
+            </div>
+            <div class="col d-grid">
+                <a class="btn btn-primary" href="/" role="button">Cancel</a>
+            </div>
+        </div>
+    </div>
+}
+
+@inject AuthenticationStateProvider provider
+@inject NavigationManager navManager
 @code{
     [Parameter] public string? Action { get; set; }
+
+    public string email = "";
+    public string password = "";
+    public string error = "";
+
+    private async Task LoginAsync()
+    {
+        var authStateProvider = (CustomAuthenticationStateProvider)provider;
+        var formResult = await authStateProvider.LoginAsync(email, password);
+        if (formResult.Success)
+        {
+            navManager.NavigateTo("/");
+        } else
+        {
+            error = formResult.Errors[0];
+        }
+    }
 }
