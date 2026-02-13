@@ -1,5 +1,6 @@
-﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+﻿@using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager Navigation
+@inject AuthenticationStateProvider authStateProvider
 
 <AuthorizeView>
     <Authorized>
@@ -7,14 +8,16 @@
         <button class="nav-link btn btn-link" @onclick="BeginLogOut">Log out</button>
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/login">Log in</a>
-        <a href="authentication/register">Register</a>
+        <a href="auth/login">Log in</a>
+        <a href="auth/register">Register</a>
     </NotAuthorized>
 </AuthorizeView>
 
 @code{
     public void BeginLogOut()
     {
-        Navigation.NavigateToLogout("authentication/logout");
+        var custAuthStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
+        custAuthStateProvider.Logout();
+        Navigation.NavigateTo("/");
     }
 }

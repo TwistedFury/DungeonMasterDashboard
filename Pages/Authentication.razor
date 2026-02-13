@@ -1,6 +1,6 @@
-﻿@page "/authentication/{action}"
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+﻿@page "/auth/{action}"
 
+<PageTitle>DMD @Action</PageTitle>
 
 @if (Action == "login")
 {
@@ -16,22 +16,83 @@
             </div>
         }
 
+        @*Log In Form*@
+        @*EMAIL*@
         <div class="mb-3">
             <label class="form-label">Email</label>
-            <InputText class="form-control" @bind-Value="email"></InputText>
+            <input class="form-control" @bind="email"></input>
         </div>
 
+        @*PASSWORD*@
         <div class="mb-3">
             <label class="form-label">Password</label>
-            <InputText class="form-control" @bind-Value="password"></InputText>
+            <input class="form-control" type="password" @bind="password"></input>
         </div>
 
+        @*LOG IN BUTTON AND CANCEL*@
         <div class="row">
             <div class="col d-grid">
                 <button class="btn btn-primary" @onclick="LoginAsync">Log In</button>
             </div>
             <div class="col d-grid">
                 <a class="btn btn-primary" href="/" role="button">Cancel</a>
+            </div>
+        </div>
+    </div>
+} else if (Action == "register")
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col mx-auto rounded border p-4" style="margin: 60px;">
+                <h3 class="text-center mb-3">Register</h3>
+                <hr />
+
+                @if (errors.Length > 0)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <ul>
+                            @foreach (var error in errors)
+                            {
+                                <li>@error</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
+                @*Register Form*@
+                @*EMAIL*@
+                <div class="row mb-3">
+                    <label class="col-md-4 col-form-label">Email</label>
+                    <div class="col-md-8">
+                        <input class="form-control" @bind="email"></input>
+                    </div>
+                </div>
+
+                @*PASSWORD*@
+                <div class="row mb-3">
+                    <label class="col-md-4 col-form-label">Password</label>
+                    <div class="col-md-8">
+                        <input class="form-control" type="password" @bind="password"></input>
+                    </div>
+                </div>
+
+                @*CONFIRM PASSWORD*@
+                <div class="row mb-3">
+                    <label class="col-md-4 col-form-label">Confirm Password</label>
+                    <div class="col-md-8">
+                        <input class="form-control" type="password" @bind="confirmPassword"></input>
+                    </div>
+                </div>
+
+                @*REGISTER BUTTON & CANCEL*@
+                <div class="row">
+                    <div class="offset-md-4 col d-grid">
+                        <button class="btn btn-primary" @onclick="RegisterAsync">Register</button>
+                    </div>
+                    <div class="col d-grid">
+                        <a class="btn btn-outline-primary" href="/" role="button">Cancel</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -42,9 +103,13 @@
 @code{
     [Parameter] public string? Action { get; set; }
 
-    public string email = "";
-    public string password = "";
-    public string error = "";
+    private string email = "";
+    private string password = "";
+    private string error = "";
+
+    // Registration fields
+    private string[] errors = [];
+    private string confirmPassword = "";
 
     private async Task LoginAsync()
     {
@@ -56,6 +121,29 @@
         } else
         {
             error = formResult.Errors[0];
+        }
+    }
+
+    private async Task RegisterAsync()
+    {
+        if (password != confirmPassword)
+        {
+            errors = ["Password and Confirm Password do not match!"];
+            return;
+        }
+        var authStateProvider = (CustomAuthenticationStateProvider)provider;
+        var registerDto = new RegisterDto
+        {
+            Email = email,
+            Password = password
+        };
+        var formResult = await authStateProvider.RegisterAsync(registerDto);
+        if (formResult.Success)
+        {
+            navManager.NavigateTo("/");
+        } else
+        {
+            errors = formResult.Errors;
         }
     }
 }

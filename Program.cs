@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using DungeonMasterDashboard;
 using DungeonMasterDashboard.Services;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -20,6 +21,7 @@ builder.Services.AddScoped(_ => new HttpClient
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+builder.Services.AddBlazoredLocalStorage();
 
 await builder.Build().RunAsync();
 
