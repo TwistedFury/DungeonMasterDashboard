@@ -1,8 +1,16 @@
 using DungeonMasterDashboard;
+using DungeonMasterDashboard.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseSqlServer("name=DefaultConnection");
+});
+
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
