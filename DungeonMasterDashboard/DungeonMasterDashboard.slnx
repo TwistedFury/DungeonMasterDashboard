@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../DungeonMasterDashboard.Server/DungeonMasterDashboard.Server.csproj" Id="b9094971-53da-4142-84a7-303a47a244f5" />
+  <Project Path="DungeonMasterDashboard.csproj" />
+</Solution>
