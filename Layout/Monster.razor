@@ -1,0 +1,22 @@
+﻿@page "/Monster"
+@inject ITestMonster TestMonster
+
+<h3>Monster</h3>
+
+@if (monsters == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <!-- Display data here (e.g., in a table) -->
+}
+
+@code {
+    private List<Monster> monsters;
+
+    protected override async Task OnInitializedAsync()
+    {
+        monsters = await ProductService.GetProductsAsync();
+    }
+}
