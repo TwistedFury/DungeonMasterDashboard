@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonMasterDashboard", "DungeonMasterDashboard\DungeonMasterDashboard.csproj", "{C427533F-168A-C262-83DF-BFBE2EE2EC37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DungeonMasterDashboard.Server", "DungeonMasterDashboard.Server\DungeonMasterDashboard.Server.csproj", "{E10F2D83-EFF0-B7BB-114B-5EC11528BBCC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C427533F-168A-C262-83DF-BFBE2EE2EC37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C427533F-168A-C262-83DF-BFBE2EE2EC37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C427533F-168A-C262-83DF-BFBE2EE2EC37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C427533F-168A-C262-83DF-BFBE2EE2EC37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E10F2D83-EFF0-B7BB-114B-5EC11528BBCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E10F2D83-EFF0-B7BB-114B-5EC11528BBCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E10F2D83-EFF0-B7BB-114B-5EC11528BBCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E10F2D83-EFF0-B7BB-114B-5EC11528BBCC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {665124BE-B72A-4A87-ADD4-79FD3C5294AF}
+	EndGlobalSection
+EndGlobal
