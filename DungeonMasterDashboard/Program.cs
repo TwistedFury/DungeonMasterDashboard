@@ -4,11 +4,13 @@ using DungeonMasterDashboard.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using DungeonMasterDashboard.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+builder.Services.AddScoped<ICampaignService, FakeCampaignService>();
 
 var apiBaseUrl = builder.Configuration["WebApiAddress"]
     ?? throw new InvalidOperationException("WebApiAddress is not configured.");
