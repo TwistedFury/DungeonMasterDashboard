@@ -4,6 +4,10 @@ namespace DungeonMasterDashboard.Services;
 
 public class FakeCampaignService : ICampaignService
 {
+	// NOTE: This service stores campaigns in memory only.
+	// Since it is registered as a scoped service, the data will reset if it reloads.
+	// This is fine for now while we build the UI, but later we can replace this with
+	// an API/database or store campaigns in LocalStorage.
     private readonly List<Campaign> _campaigns = new()
     {
         new Campaign
