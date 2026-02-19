@@ -1,0 +1,79 @@
+@page "/campaigns"
+@using DungeonMasterDashboard.Models
+@inject DungeonMasterDashboard.Services.ICampaignService Campaigns
+@inject NavigationManager Nav
+
+<h3>Campaigns</h3>
+
+<div style="margin-bottom: 1rem;">
+    <button class="btn btn-primary" @onclick="CreateCampaign">
+        Create New Campaign
+    </button>
+</div>
+
+@if (campaigns == null)
+{
+    <p>Loading campaigns...</p>
+}
+else if (campaigns.Count == 0)
+{
+    <p>No campaigns found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>System</th>
+                <th>Last Played</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var campaign in campaigns)
+            {
+                <tr>
+                    <td>@campaign.Name</td>
+                    <td>@campaign.System</td>
+                    <td>
+                        @if (campaign.LastPlayed.HasValue)
+                        {
+                            @campaign.LastPlayed.Value.ToShortDateString()
+                        }
+                        else
+                        {
+                            <span>Not played yet</span>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary"
+                                @onclick="() => EditCampaign(campaign.Id)">
+                            Edit
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Campaign>? campaigns;
+
+    // Runs when the page loads
+    protected override async Task OnInitializedAsync()
+    {
+        campaigns = await Campaigns.GetAllAsync();
+    }
+
+    private void CreateCampaign()
+    {
+        Nav.NavigateTo("/campaigns/new");
+    }
+
+    private void EditCampaign(Guid id)
+    {
+        Nav.NavigateTo("/campaigns/" + id);
+    }
+}
