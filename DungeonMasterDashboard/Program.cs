@@ -1,7 +1,4 @@
-using Blazored.LocalStorage;
 using DungeonMasterDashboard;
-using DungeonMasterDashboard.Services;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -10,18 +7,11 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-var apiBaseUrl = builder.Configuration["WebApiAddress"]
-    ?? throw new InvalidOperationException("WebApiAddress is not configured.");
-
+// If you don't have an API yet, just point to the same origin.
+// This avoids requiring WebApiAddress.
 builder.Services.AddScoped(_ => new HttpClient
 {
-    BaseAddress = new Uri(apiBaseUrl)
+    BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
 });
 
-builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddAuthorizationCore();
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-builder.Services.AddBlazoredLocalStorage();
-
 await builder.Build().RunAsync();
-

@@ -29,7 +29,7 @@
             <input class="form-control" type="password" @bind="password"></input>
         </div>
 
-        @*LOG IN BUTTON AND CANCEL*@
+        @* LOG IN BUTTON AND CANCEL
         <div class="row">
             <div class="col d-grid">
                 <button class="btn btn-primary" @onclick="LoginAsync">Log In</button>
@@ -37,7 +37,7 @@
             <div class="col d-grid">
                 <a class="btn btn-primary" href="/" role="button">Cancel</a>
             </div>
-        </div>
+        </div> *@
     </div>
 } else if (Action == "register")
 {
@@ -84,7 +84,7 @@
                     </div>
                 </div>
 
-                @*REGISTER BUTTON & CANCEL*@
+                @* REGISTER BUTTON & CANCEL
                 <div class="row">
                     <div class="offset-md-4 col d-grid">
                         <button class="btn btn-primary" @onclick="RegisterAsync">Register</button>
@@ -92,13 +92,13 @@
                     <div class="col d-grid">
                         <a class="btn btn-outline-primary" href="/" role="button">Cancel</a>
                     </div>
-                </div>
+                </div> *@
             </div>
         </div>
     </div>
 }
 
-@inject AuthenticationStateProvider provider
+@* @inject AuthenticationStateProvider provider *@
 @inject NavigationManager navManager
 @code{
     [Parameter] public string? Action { get; set; }
@@ -111,39 +111,39 @@
     private string[] errors = [];
     private string confirmPassword = "";
 
-    private async Task LoginAsync()
-    {
-        var authStateProvider = (CustomAuthenticationStateProvider)provider;
-        var formResult = await authStateProvider.LoginAsync(email, password);
-        if (formResult.Success)
-        {
-            navManager.NavigateTo("/");
-        } else
-        {
-            error = formResult.Errors[0];
-        }
-    }
+    // private async Task LoginAsync()
+    // {
+    //     var authStateProvider = (CustomAuthenticationStateProvider)provider;
+    //     var formResult = await authStateProvider.LoginAsync(email, password);
+    //     if (formResult.Success)
+    //     {
+    //         navManager.NavigateTo("/");
+    //     } else
+    //     {
+    //         error = formResult.Errors[0];
+    //     }
+    // }
 
-    private async Task RegisterAsync()
-    {
-        if (password != confirmPassword)
-        {
-            errors = ["Password and Confirm Password do not match!"];
-            return;
-        }
-        var authStateProvider = (CustomAuthenticationStateProvider)provider;
-        var registerDto = new RegisterDto
-        {
-            Email = email,
-            Password = password
-        };
-        var formResult = await authStateProvider.RegisterAsync(registerDto);
-        if (formResult.Success)
-        {
-            navManager.NavigateTo("/");
-        } else
-        {
-            errors = formResult.Errors;
-        }
-    }
+    // private async Task RegisterAsync()
+    // {
+    //     if (password != confirmPassword)
+    //     {
+    //         errors = ["Password and Confirm Password do not match!"];
+    //         return;
+    //     }
+    //     var authStateProvider = (CustomAuthenticationStateProvider)provider;
+    //     var registerDto = new RegisterDto
+    //     {
+    //         Email = email,
+    //         Password = password
+    //     };
+    //     var formResult = await authStateProvider.RegisterAsync(registerDto);
+    //     if (formResult.Success)
+    //     {
+    //         navManager.NavigateTo("/");
+    //     } else
+    //     {
+    //         errors = formResult.Errors;
+    //     }
+    // }
 }
