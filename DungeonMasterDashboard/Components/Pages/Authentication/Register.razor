@@ -1,0 +1,131 @@
+﻿@page "/register"
+@rendermode InteractiveServer
+@using Authentication
+
+@inject AuthenticationStateProvider provider
+@inject NavigationManager navManager
+@inject IHttpContextAccessor HttpContextAccessor
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col mx-auto rounded border p-4" style="margin: 60px;">
+            <h3 class="text-center mb-3">Register</h3>
+            <hr />
+
+            @*Register Form*@
+
+            @*USERNAME*@
+            <div class="row mb-3">
+                <label class="col-md-4 col-form-label">Username: </label>
+                <div class="col-md-8">
+                    <input class="form-control" @bind="username"></input>
+                </div>
+            </div>
+
+            @*PASSWORD*@
+            <div class="row mb-3">
+                <label class="col-md-4 col-form-label">Password: </label>
+                <div class="col-md-8">
+                    <input class="form-control" type="password" @bind="password"></input>
+                </div>
+            </div>
+
+            @*CONFIRM PASSWORD*@
+            <div class="row mb-3">
+                <label class="col-md-4 col-form-label">Confirm Password: </label>
+                <div class="col-md-8">
+                    <input class="form-control" type="password" @bind="confirmPassword"></input>
+                </div>
+            </div>
+
+            @*REGISTER BUTTON & CANCEL*@
+            <div class="row">
+                <div class="offset-md-4 col d-grid">
+                    <button class="btn btn-primary" @onclick="DoRegister">Register</button>
+                </div>
+                <div class="col d-grid">
+                    <a class="btn btn-outline-primary" href="/" role="button">Cancel</a>
+                </div>
+            </div>
+
+            <p>@message</p>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    string username = "";
+    string password = "";
+    string confirmPassword = "";
+    string message = "";
+
+    void DoRegister()
+    {
+        message = ""; // clear old message
+
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            message = "Username is required.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            message = "Password is required.";
+            return;
+        }
+
+        if (password != confirmPassword)
+        {
+            message = "Passwords do not match.";
+            return;
+        }
+
+        var cap = (CustomAuthStateProvider)provider;
+
+        try
+        {
+            var ok = cap.Register(username, password);
+            if (!ok)
+            {
+                message = "Username already exists.";
+                return;
+            }
+
+            // Auto-login after successful register
+            LoginAfterRegister(new Login.AdminLoginRequest { Username = username, Password = password });
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+        }
+    }
+
+    public void LoginAfterRegister(Login.AdminLoginRequest loginRequest)
+    {
+        try
+        {
+            var customAuthenticationStateProvider = (CustomAuthStateProvider)provider;
+            var token = customAuthenticationStateProvider.Login(username, password);
+            navManager.NavigateTo("/auth/signin?token=" + Uri.EscapeDataString(token), forceLoad: true);
+
+            // Set cookie here (no URL token)
+            HttpContextAccessor.HttpContext!.Response.Cookies.Append(
+                BlazorConstants.AuthCookieName,
+                token,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTimeOffset.Now.AddMinutes(30),
+                    SameSite = SameSiteMode.Lax,
+                    Secure = true // set to false ONLY if you're not using https locally
+                });
+            navManager.NavigateTo("/", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            message = ex.Message;
+        }
+    }
+}

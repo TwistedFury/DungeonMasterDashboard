@@ -1,28 +1,56 @@
-using Blazored.LocalStorage;
 using DungeonMasterDashboard;
+using DungeonMasterDashboard.Components;
+using DungeonMasterDashboard.Models;
 using DungeonMasterDashboard.Services;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
+var builder = WebApplication.CreateBuilder(args);
 
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
-builder.Services.AddScoped<ICampaignService, FakeCampaignService>();
-
-var apiBaseUrl = builder.Configuration["WebApiAddress"]
-    ?? throw new InvalidOperationException("WebApiAddress is not configured.");
-
-builder.Services.AddScoped(_ => new HttpClient
-{
-    BaseAddress = new Uri(apiBaseUrl)
-});
+// Add services to the container.
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
 
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddAuthorizationCore();
-builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
-builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddHttpContextAccessor();
 
-await builder.Build().RunAsync();
+builder.Services.AddScoped<ICampaignService, FakeCampaignService>();
 
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
+app.UseHttpsRedirection();
+
+app.UseAntiforgery();
+
+app.MapStaticAssets();
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
+app.MapGet("/auth/signin", (HttpContext ctx, string token) =>
+{
+    ctx.Response.Cookies.Append(
+        BlazorConstants.AuthCookieName,
+        token,
+        new CookieOptions
+        {
+            HttpOnly = true,
+            Expires = DateTimeOffset.UtcNow.AddMinutes(30),
+            SameSite = SameSiteMode.Lax,
+            Secure = true // HTTPS only
+        });
+
+    return Results.Redirect("/");
+});
+
+app.Run();
