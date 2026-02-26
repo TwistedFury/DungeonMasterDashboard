@@ -6,9 +6,11 @@
 @inject DungeonMasterDashboard.Services.ICampaignService Campaigns
 @inject NavigationManager Nav
 
+@rendermode InteractiveServer
+
 <h3>@pageTitle</h3>
 
-<EditForm Model="form" OnValidSubmit="SaveCampaign">
+<EditForm Model="form" OnValidSubmit="SaveCampaign" FormName="CreateCampaign">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -104,16 +106,16 @@
         public Guid Id { get; set; }
 
         [Required]
-        [StringLength(80)]
+        [StringLength(80, ErrorMessage = "Name of Campaign can be at most 80 characters!")]
         public string Name { get; set; } = "";
 
         [Required]
-        [StringLength(40)]
+        [StringLength(40, ErrorMessage = "System for Campaign can be at most 40 characters!")]
         public string System { get; set; } = "D&D 5e";
 
         public DateTime? LastPlayed { get; set; }
 
-        [StringLength(500)]
+        [StringLength(500, ErrorMessage = "Length of notes can be at most 500 characters!")]
         public string Notes { get; set; } = "";
     }
 }
