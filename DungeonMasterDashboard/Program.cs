@@ -15,7 +15,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>
 builder.Services.AddScoped<UserService>();
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<ICampaignService, FakeCampaignService>();
+builder.Services.AddSingleton<ICampaignService, FakeCampaignService>();
 
 
 var app = builder.Build();
