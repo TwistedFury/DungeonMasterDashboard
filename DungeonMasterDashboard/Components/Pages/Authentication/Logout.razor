@@ -8,6 +8,6 @@
     protected override void OnInitialized()
     {
         HttpContextAccessor.HttpContext!.Response.Cookies.Delete(BlazorConstants.AuthCookieName);
-        NavigationManager.NavigateTo("/login");
+        NavigationManager.NavigateTo("/");
     }
 }
