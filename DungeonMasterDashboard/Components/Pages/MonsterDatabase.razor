@@ -1,0 +1,31 @@
+﻿@page "/monster-database"
+@using DungeonMasterDashboard.Data
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject IDbContextFactory<DMDbContext> DbFactory
+
+<PageTitle>Monster Database</PageTitle>
+
+<QuickGrid Class="table" Items="context.FifthEditionMonsters">
+    <PropertyColumn Property="enemies => enemies.Name" />
+    <PropertyColumn Property="enemies => enemies.Alignment" />
+    <PropertyColumn Property="enemies => enemies.CreatureType" />
+
+    <TemplateColumn Context="enemies">
+        <a href="@($"monster-database/edit/{enemies.Id}")">Edit</a> |
+        <a href="@($"monster-database/details/{enemies.Id}")">Details</a> |
+        <a href="@($"monster-database/delete/{enemies.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private DMDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}
+
