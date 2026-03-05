@@ -37,7 +37,8 @@ namespace DungeonMasterDashboard.Data
 
             // Campaign Seeding
 
-            if (context.Campaigns == null || context.Campaigns.Any()) { return; }
+            if (context.Campaigns == null) throw new NullReferenceException("Null DbSet Campaigns");
+            if (context.Campaigns.Any()) { return; }
 
             context.Campaigns.AddRange(
                 new Campaign
