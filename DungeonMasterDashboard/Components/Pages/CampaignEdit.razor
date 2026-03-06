@@ -1,14 +1,17 @@
 @page "/campaigns/new"
-@page "/campaigns/{Id:guid}"
+@page "/campaigns/{Action}/{Id:guid}"
 
 @using System.ComponentModel.DataAnnotations
+@using DungeonMasterDashboard.Data
 @using DungeonMasterDashboard.Models
-@inject DungeonMasterDashboard.Services.ICampaignService Campaigns
+@using Microsoft.EntityFrameworkCore
+@inject DungeonMasterDashboard.Data.CampaignDbService Campaigns
+@inject IDbContextFactory<DMDbContext> DbFactory
 @inject NavigationManager Nav
 
 @rendermode InteractiveServer
 
-<h3>@pageTitle</h3>
+<PageTitle>@pageTitle</PageTitle>
 
 <EditForm Model="form" OnValidSubmit="SaveCampaign" FormName="CreateCampaign">
     <DataAnnotationsValidator />
@@ -43,6 +46,9 @@
 @code {
     [Parameter]
     public Guid? Id { get; set; }
+
+    [Parameter]
+    public string Action { get; set; } = string.Empty;
 
     private CampaignForm form = new CampaignForm();
     private string pageTitle = "New Campaign";
@@ -91,7 +97,7 @@
         campaignToSave.LastPlayed = form.LastPlayed;
         campaignToSave.Notes = form.Notes;
 
-        await Campaigns.SaveAsync(campaignToSave);
+        await context.SaveChangesAsync();
 
         Nav.NavigateTo("/campaigns");
     }
@@ -117,5 +123,12 @@
 
         [StringLength(500, ErrorMessage = "Length of notes can be at most 500 characters!")]
         public string Notes { get; set; } = "";
+    }
+
+    private DMDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
     }
 }

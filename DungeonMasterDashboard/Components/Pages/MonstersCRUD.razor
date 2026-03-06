@@ -1,0 +1,37 @@
+﻿@page "/monsters/{action}/{id:guid}"
+@using DungeonMasterDashboard.Data
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<DMDbContext> DbFactory
+
+@* Might want to extract each of these to a separate component in the future? *@
+@if (Action == "delete")
+{
+    @* TODO: Display Are You Sure? *@
+    <h2>Delete Page</h2>
+}
+else if (Action == "edit")
+{
+    @* TODO: Display details and editing access! *@
+    <h2>Edit Page</h2>
+}
+else if (Action == "details")
+{
+    @* TODO: Display montser info! *@
+    <h2>Details Page</h2>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+    [Parameter]
+    public string Action { get; set; } = "";
+
+    private DMDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

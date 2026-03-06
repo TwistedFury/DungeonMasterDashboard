@@ -1,8 +1,11 @@
 using DungeonMasterDashboard;
 using DungeonMasterDashboard.Components;
+using DungeonMasterDashboard.Data;
 using DungeonMasterDashboard.Models;
 using DungeonMasterDashboard.Services;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.QuickGrid.EntityFrameworkAdapter;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,8 +21,26 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<ICampaignService, FakeCampaignService>();
 builder.Services.AddSingleton<IEnemyService, MonsterService>();
 
+builder.Services.AddDbContextFactory<DMDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+
+// Database Services
+builder.Services.AddScoped<CampaignDbService>();
+builder.Services.AddScoped<FifthEditionMonsterDbService>();
+builder.Services.AddScoped<CyberpunkEnemyDbService>();
+
+builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 var app = builder.Build();
+
+// Seed data if none exists
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    SeedData.Initialize(services);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

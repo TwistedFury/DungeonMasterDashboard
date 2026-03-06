@@ -1,0 +1,63 @@
+﻿@page "/monsters"
+@using DungeonMasterDashboard.Data
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject IDbContextFactory<DMDbContext> DbFactory
+@rendermode InteractiveServer
+
+<h2>Monsters</h2>
+
+<PageTitle>Monsters</PageTitle>
+
+<div style="margin-bottom: 1rem;">
+    <button class="btn btn-primary" @onclick="CreateMonster">
+        Create New Monster
+    </button>
+    <button class="btn btn-primary" @onclick="DumpDatabase">
+        Remove FifthEditionMonsters (Remove in Prod!!)
+    </button>
+</div>
+
+@if (context.FifthEditionMonsters == null)
+{
+    <p>Loading monsters...</p>
+}
+else if (context.FifthEditionMonsters.ToList().Count == 0)
+{
+    <p>No monsters found.</p>
+}
+else
+{
+    <QuickGrid Class="table" Items="context.FifthEditionMonsters">
+        <PropertyColumn Property="enemies => enemies.Name" />
+        <PropertyColumn Property="enemies => enemies.Alignment" />
+        <PropertyColumn Property="enemies => enemies.CreatureType" />
+
+        <TemplateColumn Context="enemies">
+            <a href="@($"monsters/edit/{enemies.Id}")">Edit</a> |
+            <a href="@($"monsters/details/{enemies.Id}")">Details</a> |
+            <a href="@($"monsters/delete/{enemies.Id}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
+}
+
+@code {
+    private void CreateMonster()
+    {
+
+    }
+
+    private DMDbContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    private async Task DumpDatabase()
+    {
+        context.RemoveRange(context.FifthEditionMonsters);
+        await context.SaveChangesAsync();
+        StateHasChanged();
+    }
+}
