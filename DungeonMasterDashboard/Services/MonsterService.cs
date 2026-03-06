@@ -4,17 +4,18 @@ namespace DungeonMasterDashboard.Services
 {
     public class MonsterService : IEnemyService
     {
-        public Task<List<FifthEditionMonster>> GetAllAsync()
+
+        public Task SaveAsync(Enemy enemy)
         {
             throw new NotImplementedException();
         }
 
-        public Task<FifthEditionMonster?> GetByIdAsync(Guid id)
+        Task<List<Enemy>> IEnemyService.GetAllAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task SaveAsync(FifthEditionMonster monster)
+        Task<Enemy?> IEnemyService.GetByIdAsync(Guid id)
         {
             throw new NotImplementedException();
         }
