@@ -1,81 +1,47 @@
 @page "/campaigns"
-@using DungeonMasterDashboard.Models
-@inject DungeonMasterDashboard.Services.ICampaignService CampaignServices
+@using DungeonMasterDashboard.Data
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject IDbContextFactory<DMDbContext> DbFactory
 @inject NavigationManager Nav
-
 @rendermode InteractiveServer
 
 <h2>Campaigns</h2>
 
 <div style="margin-bottom: 1rem;">
-    <button class="btn btn-primary" @onclick="CreateCampaign">
+    <button class="btn btn-primary" @onclick='(() => Nav.NavigateTo("/campaigns/new"))'>
         Create New Campaign
     </button>
 </div>
 
-@if (campaigns == null)
+@if (context.Campaigns == null)
 {
     <p>Loading campaigns...</p>
 }
-else if (campaigns.Count == 0)
+else if (context.Campaigns.ToList().Count == 0)
 {
     <p>No campaigns found.</p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>System</th>
-                <th>Last Played</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var campaign in campaigns)
-            {
-                <tr>
-                    <td>@campaign.Name</td>
-                    <td>@campaign.System</td>
-                    <td>
-                        @if (campaign.LastPlayed.HasValue)
-                        {
-                            @campaign.LastPlayed.Value.ToShortDateString()
-                        }
-                        else
-                        {
-                            <span>Not played yet</span>
-                        }
-                    </td>
-                    <td>
-                        <button class="btn btn-secondary"
-                                @onclick="() => EditCampaign(campaign.Id)">
-                            Edit
-                        </button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <QuickGrid Class="table" Items="context.Campaigns">
+        <PropertyColumn Property="Campaign => Campaign.Name" />
+        <PropertyColumn Property="Campaign => Campaign.System" />
+        <PropertyColumn Property="Campaign => Campaign.LastPlayed" />
+
+        <TemplateColumn Context="Campaign">
+            <a href="@($"campaigns/edit/{Campaign.Id}")">Edit</a> |
+            <a href="@($"campaigns/details/{Campaign.Id}")">Details</a> |
+            <a href="@($"campaigns/delete/{Campaign.Id}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
 }
 
 @code {
-    private List<Campaign>? campaigns;
+    private DMDbContext context = default!;
 
-    // Runs when the page loads
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        campaigns = await CampaignServices.GetAllAsync();
-    }
-
-    private void CreateCampaign()
-    {
-        Nav.NavigateTo("/campaigns/new");
-    }
-
-    private void EditCampaign(Guid id)
-    {
-        Nav.NavigateTo("/campaigns/" + id);
+        context = DbFactory.CreateDbContext();
     }
 }

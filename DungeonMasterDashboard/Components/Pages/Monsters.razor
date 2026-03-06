@@ -1,74 +1,63 @@
 ﻿@page "/monsters"
-@using DungeonMasterDashboard.Models
-@inject DungeonMasterDashboard.Services.IEnemyService MonsterService
-@inject NavigationManager Nav
-
+@using DungeonMasterDashboard.Data
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject IDbContextFactory<DMDbContext> DbFactory
 @rendermode InteractiveServer
 
 <h2>Monsters</h2>
+
+<PageTitle>Monsters</PageTitle>
 
 <div style="margin-bottom: 1rem;">
     <button class="btn btn-primary" @onclick="CreateMonster">
         Create New Monster
     </button>
+    <button class="btn btn-primary" @onclick="DumpDatabase">
+        Remove FifthEditionMonsters (Remove in Prod!!)
+    </button>
 </div>
 
-@if (enemies == null)
+@if (context.FifthEditionMonsters == null)
 {
     <p>Loading monsters...</p>
 }
-else if (enemies.Count == 0)
+else if (context.FifthEditionMonsters.ToList().Count == 0)
 {
     <p>No monsters found.</p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Enemy Name</th>
-                <th>System</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var enemy in enemies)
-            {
-                <tr>
-                    <td>@enemy.Name</td>
-                    <td>@enemy.System</td>
-                    <td>
-                        <button class="btn btn-secondary"
-                                @onclick="() => OnViewEnemy(enemy.Id)">
-                            View Monster
-                        </button>
-                    </td>
-                    <td>
-                        <button class="btn btn-secondary"
-                                @onclick="() => OnEditEnemy(enemy.Id)">
-                            Edit Monster
-                        </button>
-                    </td>
-				</tr>
-            }
+    <QuickGrid Class="table" Items="context.FifthEditionMonsters">
+        <PropertyColumn Property="enemies => enemies.Name" />
+        <PropertyColumn Property="enemies => enemies.Alignment" />
+        <PropertyColumn Property="enemies => enemies.CreatureType" />
 
-        </tbody>
-    </table>
+        <TemplateColumn Context="enemies">
+            <a href="@($"monsters/edit/{enemies.Id}")">Edit</a> |
+            <a href="@($"monsters/details/{enemies.Id}")">Details</a> |
+            <a href="@($"monsters/delete/{enemies.Id}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
 }
 
 @code {
-    private List<Enemy>? enemies;
-
     private void CreateMonster()
     {
 
     }
-    private void OnViewEnemy(Guid enemyId)
-    {
 
-    }
-    private void OnEditEnemy(Guid enemyId)
+    private DMDbContext context = default!;
+
+    protected override void OnInitialized()
     {
-        
+        context = DbFactory.CreateDbContext();
+    }
+
+    private async Task DumpDatabase()
+    {
+        context.RemoveRange(context.FifthEditionMonsters);
+        await context.SaveChangesAsync();
+        StateHasChanged();
     }
 }

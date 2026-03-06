@@ -25,6 +25,11 @@ builder.Services.AddDbContextFactory<DMDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
+// Database Services
+builder.Services.AddScoped<CampaignDbService>();
+builder.Services.AddScoped<FifthEditionMonsterDbService>();
+builder.Services.AddScoped<CyberpunkEnemyDbService>();
+
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 var app = builder.Build();
