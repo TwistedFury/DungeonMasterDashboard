@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DungeonMasterDashboard.Services;
+using System.ComponentModel.DataAnnotations;
 
-namespace DungeonMasterDashboard.Services
+namespace DungeonMasterDashboard.Models
 {
     public class VTMEnemy : Enemy
     {
@@ -54,7 +55,6 @@ namespace DungeonMasterDashboard.Services
         [Range(1, 5)] int Technology;
 
         #endregion
-
 
     }
 }

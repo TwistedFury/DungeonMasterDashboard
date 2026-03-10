@@ -1,4 +1,4 @@
-﻿using DungeonMasterDashboard.Services;
+﻿using DungeonMasterDashboard.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DungeonMasterDashboard.Data
