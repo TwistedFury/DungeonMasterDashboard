@@ -18,11 +18,8 @@ builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthStateProvider>
 builder.Services.AddScoped<UserService>();
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddSingleton<ICampaignService, FakeCampaignService>();
-builder.Services.AddSingleton<IEnemyService, MonsterService>();
-
 builder.Services.AddDbContextFactory<DMDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options.UseAzureSql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 // Database Services
@@ -34,13 +31,22 @@ builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 var app = builder.Build();
 
-// Seed data if none exists
-using (var scope = app.Services.CreateScope())
+app.MapPost("/seed", async (IServiceProvider services) =>
 {
-    var services = scope.ServiceProvider;
+    try
+    {
+        using var scope = services.CreateScope();
+        var scopedServices = scope.ServiceProvider;
 
-    SeedData.Initialize(services);
-}
+        await SeedData.InitializeAsync(scopedServices);
+
+        return Results.Ok("Seeding completed.");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem($"Seeding failed: {ex.Message}");
+    }
+});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

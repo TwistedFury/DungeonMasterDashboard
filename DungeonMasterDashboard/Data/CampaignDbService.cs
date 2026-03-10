@@ -1,17 +1,21 @@
 ﻿using DungeonMasterDashboard.Components.Pages;
+using DungeonMasterDashboard.Data;
 using DungeonMasterDashboard.Models;
 using DungeonMasterDashboard.Services;
 using Microsoft.EntityFrameworkCore;
+using DbFactory = Microsoft.EntityFrameworkCore.IDbContextFactory<DungeonMasterDashboard.Data.DMDbContext>;
 
 namespace DungeonMasterDashboard.Data
 {
     public class CampaignDbService : ICampaignService
     {
+        private readonly DbFactory _dbFactory;
         private DMDbContext _context;
 
-        public CampaignDbService(DMDbContext context)
+        public CampaignDbService(DbFactory dbFactory)
         {
-            _context = context;
+            _dbFactory = dbFactory;
+            _context = _dbFactory.CreateDbContext();
         }
 
         public async Task SaveAsync(Campaign campaign)

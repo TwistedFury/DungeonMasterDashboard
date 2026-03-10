@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DungeonMasterDashboard.Services
 {
@@ -16,17 +17,11 @@ namespace DungeonMasterDashboard.Services
         public int MaxEmpathy { get; set; } = 2;
         public int CurrentEmpathy { get; set; } = 2;
 
-        public int HitPoints 
-        { 
-            get; 
-            private set => hitPointForumla((float)Willpower, (float)Body);
-        }
+        // Calculated property - not mapped to database
+        [NotMapped]
+        public int HitPoints => hitPointForumla((float)Willpower, (float)Body);
 
-        public int MaxHumanity
-        {
-            get;
-            private set;
-        }
+        public int MaxHumanity { get; set; }
         public int CurrentHumanity { get; set; }
 
         #endregion
@@ -49,125 +44,117 @@ namespace DungeonMasterDashboard.Services
         #region Skill Ranks
         #region Awareness-Skills
 
-        [Range(2, 10)] public int ConcentrationSkill;
-        [Range(0, 10)] public int ConcealRevealObjectSkill;
-        [Range(0, 10)] public int LipReadingSkill;
-        [Range(2, 10)] public int PerceptionSkill;
-        [Range(0, 10)] public int TrackingSkill;
+        [Range(2, 10)] public int ConcentrationSkill { get; set; }
+        [Range(0, 10)] public int ConcealRevealObjectSkill { get; set; }
+        [Range(0, 10)] public int LipReadingSkill { get; set; }
+        [Range(2, 10)] public int PerceptionSkill { get; set; }
+        [Range(0, 10)] public int TrackingSkill { get; set; }
 
         #endregion
         #region Body-Skills
 
-        [Range(2, 10)] public int AthleticsSkill;
-        [Range(0, 10)] public int ContortionistSkill;
-        [Range(0, 10)] public int DanceSkill;
-        [Range(0, 10)] public int EnduranceSkill;
-        [Range(0, 10)] public int ResistTortureDrugsSkill;
-        [Range(2, 10)] public int StealthSkill;
+        [Range(2, 10)] public int AthleticsSkill { get; set; }
+        [Range(0, 10)] public int ContortionistSkill { get; set; }
+        [Range(0, 10)] public int DanceSkill { get; set; }
+        [Range(0, 10)] public int EnduranceSkill { get; set; }
+        [Range(0, 10)] public int ResistTortureDrugsSkill { get; set; }
+        [Range(2, 10)] public int StealthSkill { get; set; }
 
         #endregion
         #region Control-Skills
 
-        [Range(0, 10)] public int DriveLandVehicleSkill;
-        [Range(0, 10)] public int PilotAirVehicleSkill;
-        [Range(0, 10)] public int PilotSeaVehicleSkill;
-        [Range(0, 10)] public int RidingSkill;
+        [Range(0, 10)] public int DriveLandVehicleSkill { get; set; }
+        [Range(0, 10)] public int PilotAirVehicleSkill { get; set; }
+        [Range(0, 10)] public int PilotSeaVehicleSkill { get; set; }
+        [Range(0, 10)] public int RidingSkill { get; set; }
 
         #endregion
         #region Education-Skills
 
-        [Range(0, 10)] public int AccountingSkill;
-        [Range(0, 10)] public int AnimalHandlingSkill;
-        [Range(0, 10)] public int BeaurecracySkill;
-        [Range(0, 10)] public int BusinessSkill;
-        [Range(0, 10)] public int CompositionSkill;
-        [Range(0, 10)] public int CriminologySkill;
-        [Range(0, 10)] public int CryptographySkill;
-        [Range(0, 10)] public int DeductionSkill;
-        [Range(2, 10)] public int EducationSkill;
-        [Range(0, 10)] public int GambleSkill;
+        [Range(0, 10)] public int AccountingSkill { get; set; }
+        [Range(0, 10)] public int AnimalHandlingSkill { get; set; }
+        [Range(0, 10)] public int BeaurecracySkill { get; set; }
+        [Range(0, 10)] public int BusinessSkill { get; set; }
+        [Range(0, 10)] public int CompositionSkill { get; set; }
+        [Range(0, 10)] public int CriminologySkill { get; set; }
+        [Range(0, 10)] public int CryptographySkill { get; set; }
+        [Range(0, 10)] public int DeductionSkill { get; set; }
+        [Range(2, 10)] public int EducationSkill { get; set; }
+        [Range(0, 10)] public int GambleSkill { get; set; }
 
-        [Range(4, 10)] public int NativeLanguageSkill;
-        [Range(2, 10)] public int StreetSlangSkill;
-        Dictionary<string, int> LanguageList = new Dictionary<string, int>()
-        {
+        [Range(4, 10)] public int NativeLanguageSkill { get; set; }
+        [Range(2, 10)] public int StreetSlangSkill { get; set; }
 
-        };
+        // Stored as JSON in database
+        public Dictionary<string, int> LanguageList { get; set; } = new Dictionary<string, int>();
 
-        [Range(0, 10)] public int LibrarySearchSkill;
+        [Range(0, 10)] public int LibrarySearchSkill { get; set; }
 
-        Dictionary<string, int> ScienceList = new Dictionary<string, int>()
-        {
+        public Dictionary<string, int> ScienceList { get; set; } = new Dictionary<string, int>();
 
-        };
-
-        [Range(0, 10)] public int TacticsSkill;
-        [Range(0, 10)] public int WildernessSurvivalSkill;
+        [Range(0, 10)] public int TacticsSkill { get; set; }
+        [Range(0, 10)] public int WildernessSurvivalSkill { get; set; }
 
         #endregion
         #region Fighting-Skills
-        [Range(2, 10)] public int BrawlingSkill;
-        [Range(2, 10)] public int EvasionSkill;
+        [Range(2, 10)] public int BrawlingSkill { get; set; }
+        [Range(2, 10)] public int EvasionSkill { get; set; }
 
-        Dictionary<string, int> MartialArtsList = new Dictionary<string, int>()
-        {
+        public Dictionary<string, int> MartialArtsList { get; set; } = new Dictionary<string, int>();
 
-        };
-
-        [Range(0, 10)] public int MeleeWeaponsSkill;
+        [Range(0, 10)] public int MeleeWeaponsSkill { get; set; }
 
         #endregion
         #region Performance-Skills
 
-        [Range(0, 10)] public int ActingSkill;
-        Dictionary<string, int> InstrumentList = new Dictionary<string, int>()
-        {
-
-        };
+        [Range(0, 10)] public int ActingSkill { get; set; }
+        
+        public Dictionary<string, int> InstrumentList { get; set; } = new Dictionary<string, int>();
 
         #endregion
         #region Ranged-Weapon-Skills
 
-        [Range(0, 10)] public int ArcherySkill;
-        [Range(0, 10)] public int AutofireSkill;
-        [Range(0, 10)] public int HandgunsSkill;
-        [Range(0, 10)] public int HeavyWeaponsSkill;
-        [Range(0, 10)] public int ShoulderArmsSkill;
+        [Range(0, 10)] public int ArcherySkill { get; set; }
+        [Range(0, 10)] public int AutofireSkill { get; set; }
+        [Range(0, 10)] public int HandgunsSkill { get; set; }
+        [Range(0, 10)] public int HeavyWeaponsSkill { get; set; }
+        [Range(0, 10)] public int ShoulderArmsSkill { get; set; }
 
         #endregion
         #region Social-Skills
 
-        [Range(0, 10)] public int BriberySkill;
-        [Range(2, 10)] public int ConversationSkill;
-        [Range(0, 10)] public int HumanPerceptionSkill;
-        [Range(2, 10)] public int InterogationSkill;
-        [Range(2, 10)] public int PersuasionSkill;
-        [Range(0, 10)] public int PersonalGroomingSkill;
-        [Range(0, 10)] public int StreetwiseSkill;
-        [Range(0, 10)] public int TradingSkill;
-        [Range(0, 10)] public int WardrobeAndStyleSkill;
+        [Range(0, 10)] public int BriberySkill { get; set; }
+        [Range(2, 10)] public int ConversationSkill { get; set; }
+        [Range(0, 10)] public int HumanPerceptionSkill { get; set; }
+        [Range(2, 10)] public int InterogationSkill { get; set; }
+        [Range(2, 10)] public int PersuasionSkill { get; set; }
+        [Range(0, 10)] public int PersonalGroomingSkill { get; set; }
+        [Range(0, 10)] public int StreetwiseSkill { get; set; }
+        [Range(0, 10)] public int TradingSkill { get; set; }
+        [Range(0, 10)] public int WardrobeAndStyleSkill { get; set; }
 
         #endregion
         #region Technique-Skills
 
-        [Range(0, 10)] public int AirVehicleTechSkill;
-        [Range(0, 10)] public int BasicTechSkill;
-        [Range(0, 10)] public int CybertechSkill;
-        [Range(0, 10)] public int DemolitionsSkill;
-        [Range(0, 10)] public int ElectronicsSecurityTechSkill;
-        [Range(2, 10)] public int FirstAidSkill;
-        [Range(0, 10)] public int ForgerySkill;
-        [Range(0, 10)] public int LandVehicleTechSkill;
-        [Range(0, 10)] public int ParamedicSkill;
-        [Range(0, 10)] public int PhotographyFilmSkill;
-        [Range(0, 10)] public int PickLockSkill;
-        [Range(0, 10)] public int PickPocketSkill;
-        [Range(0, 10)] public int SeaVehicleTechSkill;
-        [Range(0, 10)] public int WeaponstechSkill;
+        [Range(0, 10)] public int AirVehicleTechSkill { get; set; }
+        [Range(0, 10)] public int BasicTechSkill { get; set; }
+        [Range(0, 10)] public int CybertechSkill { get; set; }
+        [Range(0, 10)] public int DemolitionsSkill { get; set; }
+        [Range(0, 10)] public int ElectronicsSecurityTechSkill { get; set; }
+        [Range(2, 10)] public int FirstAidSkill { get; set; }
+        [Range(0, 10)] public int ForgerySkill { get; set; }
+        [Range(0, 10)] public int LandVehicleTechSkill { get; set; }
+        [Range(0, 10)] public int ParamedicSkill { get; set; }
+        [Range(0, 10)] public int PhotographyFilmSkill { get; set; }
+        [Range(0, 10)] public int PickLockSkill { get; set; }
+        [Range(0, 10)] public int PickPocketSkill { get; set; }
+        [Range(0, 10)] public int SeaVehicleTechSkill { get; set; }
+        [Range(0, 10)] public int WeaponstechSkill { get; set; }
 
         #endregion
         #endregion
 
-        List<string> Cyberware = new List<string>();
+        // Stored as JSON in database
+        public List<string> Cyberware { get; set; } = new List<string>();
     }
 }

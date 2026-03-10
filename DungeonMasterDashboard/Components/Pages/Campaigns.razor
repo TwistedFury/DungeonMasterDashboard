@@ -1,10 +1,12 @@
 @page "/campaigns"
 @using DungeonMasterDashboard.Data
+@using DungeonMasterDashboard.Models
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @inject IDbContextFactory<DMDbContext> DbFactory
 @inject NavigationManager Nav
 @rendermode InteractiveServer
+@implements IAsyncDisposable
 
 <h2>Campaigns</h2>
 
@@ -14,17 +16,21 @@
     </button>
 </div>
 
-@if (context.Campaigns == null)
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p class="text-danger">@errorMessage</p>
+}
+else if (campaigns == null)
 {
     <p>Loading campaigns...</p>
 }
-else if (context.Campaigns.ToList().Count == 0)
+else if (campaigns.Count == 0)
 {
     <p>No campaigns found.</p>
 }
 else
 {
-    <QuickGrid Class="table" Items="context.Campaigns">
+    <QuickGrid Class="table" Items="campaigns.AsQueryable()">
         <PropertyColumn Property="Campaign => Campaign.Name" />
         <PropertyColumn Property="Campaign => Campaign.System" />
         <PropertyColumn Property="Campaign => Campaign.LastPlayed" />
@@ -38,10 +44,30 @@ else
 }
 
 @code {
-    private DMDbContext context = default!;
+    private DMDbContext? context;
+    private List<Campaign>? campaigns;
+    private string? errorMessage;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        context = DbFactory.CreateDbContext();
+        try
+        {
+            context = await DbFactory.CreateDbContextAsync();
+            campaigns = await context.Campaigns
+                .OrderByDescending(c => c.LastPlayed ?? DateTime.MinValue)
+                .ToListAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (context is not null)
+        {
+            await context.DisposeAsync();
+        }
     }
 }

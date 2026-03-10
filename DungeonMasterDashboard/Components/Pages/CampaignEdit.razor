@@ -13,7 +13,7 @@
 
 <PageTitle>@pageTitle</PageTitle>
 
-<EditForm Model="form" OnValidSubmit="SaveCampaign" FormName="CreateCampaign">
+<EditForm Model="form" OnValidSubmit="SaveCampaign" FormName="CampaignEditor">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -94,10 +94,11 @@
 
         campaignToSave.Name = form.Name;
         campaignToSave.System = form.System;
-        campaignToSave.LastPlayed = form.LastPlayed;
+        if (form.LastPlayed == null) campaignToSave.LastPlayed = DateTime.MinValue;
+        else campaignToSave.LastPlayed = form.LastPlayed;
         campaignToSave.Notes = form.Notes;
 
-        await context.SaveChangesAsync();
+        await Campaigns.SaveAsync(campaignToSave);
 
         Nav.NavigateTo("/campaigns");
     }
@@ -123,12 +124,5 @@
 
         [StringLength(500, ErrorMessage = "Length of notes can be at most 500 characters!")]
         public string Notes { get; set; } = "";
-    }
-
-    private DMDbContext context = default!;
-
-    protected override void OnInitialized()
-    {
-        context = DbFactory.CreateDbContext();
     }
 }
