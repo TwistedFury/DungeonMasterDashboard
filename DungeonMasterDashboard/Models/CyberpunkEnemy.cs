@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DungeonMasterDashboard.Services;
+using System.ComponentModel.DataAnnotations;
 
-namespace DungeonMasterDashboard.Services
+namespace DungeonMasterDashboard.Models
 {
     public class CyberpunkEnemy : Enemy
     {
