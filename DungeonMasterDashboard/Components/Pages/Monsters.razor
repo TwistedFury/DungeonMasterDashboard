@@ -2,6 +2,7 @@
 @using DungeonMasterDashboard.Data
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
+@inject FifthEditionMonsterDbService MonsterService
 @inject IDbContextFactory<DMDbContext> DbFactory
 @rendermode InteractiveServer
 
@@ -15,11 +16,11 @@
     </button>
 </div>
 
-@if (context.FifthEditionMonsters == null)
+@if (Enemies == null)
 {
     <p>Loading monsters...</p>
 }
-else if (context.FifthEditionMonsters.ToList().Count == 0)
+else if (Enemies.Count == 0)
 {
     <p>No monsters found.</p>
 }
@@ -39,6 +40,8 @@ else
 }
 
 @code {
+    public List<FifthEditionMonster> Enemies { get; set; }
+
     private void CreateMonster()
     {
 
@@ -46,15 +49,15 @@ else
 
     private DMDbContext context = default!;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        context = DbFactory.CreateDbContext();
-    }
-
-    private async Task DumpDatabase()
-    {
-        context.RemoveRange(context.FifthEditionMonsters);
-        await context.SaveChangesAsync();
-        StateHasChanged();
+        try
+        {
+            context = await DbFactory.CreateDbContextAsync();
+            Enemies = await context.FifthEditionMonsters
+                .OrderByDescending(e => e.Id)
+                .ToListAsync();
+        }
+        catch (Exception ex) { }
     }
 }
