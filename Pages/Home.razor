@@ -1,11 +1,23 @@
 ﻿@page "/"
+@layout MainLayout
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Home: Dungeon Master Dashboard</h1>
 
-<div class="alert alert-warning" role="alert">
-    Before authentication will function correctly, you must configure your provider details in <code>Program.cs</code>
-</div>
-
-Welcome to your new app.
+<AuthorizeView>
+	<NotAuthorized>
+		This is a Blazor Web App for PRO150 at Neumont University. <br />
+		This is hosted through Azure (currently) and has a back-end connection to an 
+		AzureSQL database.
+		<br /><br />
+		Please Register to use the service!
+	</NotAuthorized>
+	<Authorized>
+		This is a Blazor Web App for PRO150 at Neumont University. <br />
+		This is hosted through Azure (currently) and has a back-end connection to an
+		AzureSQL database.
+		<br /><br />
+		You can use the navigation on the left to access the service!
+	</Authorized>
+</AuthorizeView>
