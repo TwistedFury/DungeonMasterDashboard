@@ -1,0 +1,128 @@
+@page "/campaigns/new"
+@page "/campaigns/{Action}/{Id:guid}"
+
+@using System.ComponentModel.DataAnnotations
+@using DungeonMasterDashboard.Data
+@using DungeonMasterDashboard.Models
+@using Microsoft.EntityFrameworkCore
+@inject DungeonMasterDashboard.Data.CampaignDbService Campaigns
+@inject IDbContextFactory<DMDbContext> DbFactory
+@inject NavigationManager Nav
+
+@rendermode InteractiveServer
+
+<PageTitle>@pageTitle</PageTitle>
+
+<EditForm Model="form" OnValidSubmit="SaveCampaign" FormName="CampaignEditor">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <InputText class="form-control" @bind-Value="form.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">System</label>
+        <InputText class="form-control" @bind-Value="form.System" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Last Played</label>
+        <InputDate class="form-control" @bind-Value="form.LastPlayed" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Notes</label>
+        <InputTextArea class="form-control" @bind-Value="form.Notes" />
+    </div>
+
+    <button class="btn btn-primary" type="submit">Save</button>
+    <button class="btn btn-secondary" type="button" @onclick="Cancel">
+        Cancel
+    </button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public Guid? Id { get; set; }
+
+    [Parameter]
+    public string Action { get; set; } = string.Empty;
+
+    private CampaignForm form = new CampaignForm();
+    private string pageTitle = "New Campaign";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // If no Id is provided, creates a new campaign
+        if (Id == null || Id == Guid.Empty)
+        {
+            pageTitle = "New Campaign";
+            form = new CampaignForm();
+            return;
+        }
+
+        // Otherwise, edit the existing campaign
+        pageTitle = "Edit Campaign";
+
+        var existingCampaign = await Campaigns.GetByIdAsync(Id.Value);
+
+        if (existingCampaign == null)
+        {
+            // If campaign not found, returns to list
+            Nav.NavigateTo("/campaigns");
+            return;
+        }
+
+        form.Id = existingCampaign.Id;
+        form.Name = existingCampaign.Name;
+        form.System = existingCampaign.System;
+        form.LastPlayed = existingCampaign.LastPlayed;
+        form.Notes = existingCampaign.Notes;
+    }
+
+    private async Task SaveCampaign()
+    {
+        Campaign campaignToSave = new Campaign();
+
+        // If editing, keeps the existing Id
+        if (form.Id != Guid.Empty)
+        {
+            campaignToSave.Id = form.Id;
+        }
+
+        campaignToSave.Name = form.Name;
+        campaignToSave.System = form.System;
+        if (form.LastPlayed == null) campaignToSave.LastPlayed = DateTime.MinValue;
+        else campaignToSave.LastPlayed = form.LastPlayed;
+        campaignToSave.Notes = form.Notes;
+
+        await Campaigns.SaveAsync(campaignToSave);
+
+        Nav.NavigateTo("/campaigns");
+    }
+
+    private void Cancel()
+    {
+        Nav.NavigateTo("/campaigns");
+    }
+
+    private class CampaignForm
+    {
+        public Guid Id { get; set; }
+
+        [Required]
+        [StringLength(80, ErrorMessage = "Name of Campaign can be at most 80 characters!")]
+        public string Name { get; set; } = "";
+
+        [Required]
+        [StringLength(40, ErrorMessage = "System for Campaign can be at most 40 characters!")]
+        public string System { get; set; } = "D&D 5e";
+
+        public DateTime? LastPlayed { get; set; }
+
+        [StringLength(500, ErrorMessage = "Length of notes can be at most 500 characters!")]
+        public string Notes { get; set; } = "";
+    }
+}
